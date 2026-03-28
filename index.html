@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Correlation Signals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#fff8f1;
+      --card:#ffffff;
+      --text:#151733;
+      --muted:#6a6f8d;
+      --line:#ece3d8;
+      --accent1:#ffb800;
+      --accent2:#ff5e3a;
+      --accent3:#11cfa5;
+      --accent4:#3197ff;
+      --shadow: 0 18px 50px rgba(46, 36, 23, .08);
+      --radius: 24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255,184,0,.10), transparent 30%),
+        radial-gradient(circle at top right, rgba(255,94,58,.08), transparent 28%),
+        linear-gradient(180deg, #fffdf9 0%, var(--bg) 100%);
+      color:var(--text);
+    }
+    .wrap{
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px 22px 40px;
+    }
+    .hero h1{
+      margin:0;
+      font-size: clamp(2.7rem, 6vw, 5rem);
+      line-height: .95;
+      letter-spacing:-.05em;
+      font-weight:900;
+    }
+    .hero h1 .accent{
+      background: linear-gradient(90deg, var(--accent2), #ff7d2f, #ff4f67);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .hero p{
+      margin: 18px 0 0;
+      font-size: 1.08rem;
+      color: #223;
+      opacity:.9;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-top:18px;
+    }
+    .refresh-btn{
+      border:0;
+      background: linear-gradient(135deg, var(--accent2), #ff7a45);
+      color:#fff;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow: 0 12px 26px rgba(255,94,58,.25);
+    }
+    .refresh-btn:hover{ transform: translateY(-1px); }
+
+    .stats{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:18px;
+      margin-top: 44px;
+    }
+    .stat{
+      position:relative;
+      background: rgba(255,255,255,.95);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 22px 22px 20px;
+      min-height: 104px;
+      overflow:hidden;
+    }
+    .stat:before{
+      content:"";
+      position:absolute;
+      inset:0 auto auto 0;
+      width:100%;
+      height:4px;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent4));
+    }
+    .stat .label{
+      text-transform:uppercase;
+      letter-spacing:.35em;
+      font-size:.72rem;
+      color:#7d7f9d;
+      font-weight:700;
+    }
+    .stat .value{
+      margin-top:14px;
+      font-size: clamp(1.7rem, 3vw, 2.3rem);
+      font-weight:900;
+      color:var(--text);
+    }
+    .stat:nth-child(1) .value{ color:#ffb800; }
+    .stat:nth-child(2) .value{ color:#ff7a2d; }
+    .stat:nth-child(3) .value{ color:#0fcea1; }
+
+    .info{
+      display:grid;
+      grid-template-columns: 1.2fr .9fr;
+      gap: 18px;
+      margin-top: 34px;
+      background: rgba(255,255,255,.85);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      padding: 26px 26px 24px;
+    }
+    .panel h3{
+      margin:0 0 12px;
+      font-size: .95rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#ff5a2f;
+    }
+    .bullets{
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
+    .bullets li{
+      position:relative;
+      padding-left:22px;
+      margin: 12px 0;
+      color:#26304f;
+      line-height:1.5;
+    }
+    .bullets li:before{
+      content:"→";
+      position:absolute;
+      left:0;
+      top:0;
+      color:#ff5a2f;
+      font-weight:800;
+    }
+    .video-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      margin-top: 14px;
+      background: linear-gradient(135deg, var(--accent2), #ff5f70);
+      color:#fff;
+      padding: 13px 18px;
+      border-radius: 14px;
+      text-decoration:none;
+      font-weight:800;
+      box-shadow: 0 14px 30px rgba(255,94,58,.24);
+    }
+
+    .section-title{
+      margin: 34px 0 14px;
+      font-size: .86rem;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      color:#697096;
+      font-weight:800;
+    }
+
+    .table-card{
+      background: rgba(255,255,255,.96);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .table-wrap{
+      overflow:auto;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width: 920px;
+    }
+    thead th{
+      text-align:left;
+      font-size:.78rem;
+      letter-spacing:.22em;
+      color:#8a8fa8;
+      text-transform:uppercase;
+      padding: 18px 22px;
+      background:#fff9f2;
+      border-bottom:1px solid #efe5da;
+    }
+    tbody td{
+      padding: 18px 22px;
+      border-bottom:1px solid #f0ece6;
+      vertical-align:middle;
+    }
+    tbody tr:hover{
+      background:#fffdf8;
+    }
+    .rank{
+      width:50px;
+      font-weight:700;
+      color:#656d8b;
+    }
+    .symbol{
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing:.02em;
+      color:#161c39;
+    }
+    .price-pill{
+      display:inline-block;
+      padding: 8px 14px;
+      border-radius: 12px;
+      border:1px solid #ffd48b;
+      background: #fff6e6;
+      color:#d55b00;
+      font-weight:800;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.75);
+    }
+    .corr{
+      min-width: 230px;
+    }
+    .corr-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .bar{
+      width: 120px;
+      height: 8px;
+      border-radius: 999px;
+      background: #e9eef8;
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+    .bar > span{
+      display:block;
+      height:100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent3), var(--accent4));
+    }
+    .corr-value{
+      font-weight:900;
+      color:#ff4157;
+      min-width: 70px;
+      text-align:left;
+    }
+    .chart-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border:1px solid #ffd2bc;
+      color:#ff5a2f;
+      text-decoration:none;
+      font-weight:800;
+      background:#fff8f3;
+    }
+    .chart-btn:hover{
+      background:#fff2ea;
+    }
+    .meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin: 8px 2px 14px;
+      color:#6c7090;
+      font-size:.95rem;
+    }
+    .status{
+      font-weight:700;
+    }
+    .error{
+      color:#d64545;
+      font-weight:700;
+    }
+    .footer{
+      margin-top: 26px;
+      color:#8a8fa8;
+      font-size:.92rem;
+      text-align:center;
+    }
+
+    @media (max-width: 900px){
+      .stats, .info{ grid-template-columns:1fr; }
+      .hero h1{ font-size: 3rem; }
+      .meta{ flex-direction:column; align-items:flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Correlation <span class="accent">Signals</span></h1>
+      <p>Stocks with ≥90% correlation to NEPSE Index · Last 30 trading days</p>
+    </section>
+
+    <div class="topbar">
+      <div class="status" id="statusText">Loading data...</div>
+      <button class="refresh-btn" onclick="init()">Refresh</button>
+    </div>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="label">Date</div>
+        <div class="value" id="dateValue">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Stocks Found</div>
+        <div class="value" id="countValue">0</div>
+      </div>
+      <div class="stat">
+        <div class="label">Threshold</div>
+        <div class="value" id="thresholdValue">≥ 90%</div>
+      </div>
+    </section>
+
+    <section class="info">
+      <div class="panel">
+        <h3>Yo website le k गर्छ?</h3>
+        <ul class="bullets">
+          <li>NEPSE sanga 90%+ correlation bhayeka stocks auto filter गर्छa</li>
+          <li>Pachhilo 30 trading days ko closing data analyze garera list banaunchha</li>
+          <li>Stock list daily update hunchha (Apps Script trigger bata)</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Why this tool</h3>
+        <ul class="bullets">
+          <li>Manual correlation calculation gareko bela time bachhcha</li>
+          <li>Trading decisions ma focus garna sajilo hunchha</li>
+          <li>Special thanks: Narayan Chapagain Sir</li>
+        </ul>
+        <a class="video-btn" href="https://www.youtube.com/" target="_blank" rel="noreferrer">▶ Watch Tutorial Video</a>
+      </div>
+    </section>
+
+    <div class="section-title" id="listTitle">0 stocks with ≥90% correlation</div>
+
+    <section class="table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Symbol</th>
+              <th>Close Price</th>
+              <th>Correlation</th>
+              <th>Chart</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="5" style="padding:24px;color:#7a8099;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="footer">
+      Powered by Google Apps Script + static HTML dashboard
+    </div>
+  </div>
+
+  <script>
+    // Replace with your deployed Apps Script Web App URL
+    const API_URL = "https://script.google.com/macros/s/AKfycbz9SCmJXU2lhMAL-xHzhjfAjDXla7LkPULLebrlvuErMd8_tHzGHB2IK8neKSigNK5l/exec";
+    const THRESHOLD_DEFAULT = 90;
+
+    const statusText = document.getElementById('statusText');
+    const dateValue = document.getElementById('dateValue');
+    const countValue = document.getElementById('countValue');
+    const thresholdValue = document.getElementById('thresholdValue');
+    const listTitle = document.getElementById('listTitle');
+    const tbody = document.getElementById('tbody');
+
+    function loadJSONP(url) {
+      return new Promise((resolve, reject) => {
+        const cb = '__cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+        const script = document.createElement('script');
+
+        window[cb] = function(data) {
+          cleanup();
+          resolve(data);
+        };
+
+        script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb + '&_=' + Date.now();
+        script.onerror = function() {
+          cleanup();
+          reject(new Error('Failed to load data from API.'));
+        };
+
+        function cleanup() {
+          try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        document.body.appendChild(script);
+      });
+    }
+
+    function fmtClose(v) {
+      const n = Number(String(v).replace(/,/g, ''));
+      if (Number.isFinite(n)) {
+        return 'Rs ' + n.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 2 });
+      }
+      return v ?? '—';
+    }
+
+    function normItems(payload) {
+      const arr = Array.isArray(payload) ? payload : (payload.items || payload.results || []);
+      return arr.map((it, idx) => {
+        const symbol = it.symbol || it.Symbol || it.code || '';
+        const corr = Number(it.correlation ?? it.correlationVsIndex ?? it.corr ?? 0);
+        const close = it.close ?? it.ltp ?? it.price ?? '';
+        return {
+          rank: idx + 1,
+          symbol,
+          close,
+          correlation: corr,
+          chartUrl: it.chartUrl || ('https://nepsealpha.com/trading/chart?symbol=' + encodeURIComponent(symbol))
+        };
+      }).filter(x => x.symbol);
+    }
+
+    function render(payload) {
+      const items = normItems(payload).sort((a,b) => b.correlation - a.correlation);
+      const d = payload && (payload.date || payload.asOf || payload.updatedAt) ? (payload.date || payload.asOf || payload.updatedAt) : new Date().toISOString().slice(0,10);
+      const threshold = (payload && payload.threshold) ? payload.threshold : THRESHOLD_DEFAULT;
+
+      dateValue.textContent = d;
+      countValue.textContent = items.length;
+      thresholdValue.textContent = '≥ ' + threshold + '%';
+      listTitle.textContent = items.length + ' stocks with ≥' + threshold + '% correlation';
+
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="padding:24px;color:#7a8099;">No stocks found above threshold right now.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = items.map((item, i) => {
+        const width = Math.max(6, Math.min(100, item.correlation));
+        return `
+          <tr>
+            <td class="rank">${i + 1}</td>
+            <td class="symbol">${item.symbol}</td>
+            <td><span class="price-pill">${fmtClose(item.close)}</span></td>
+            <td class="corr">
+              <div class="corr-row">
+                <div class="bar"><span style="width:${width}%;"></span></div>
+                <div class="corr-value">${item.correlation.toFixed(2)}%</div>
+              </div>
+            </td>
+            <td><a class="chart-btn" href="${item.chartUrl}" target="_blank" rel="noreferrer">View ↗</a></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function init() {
+      statusText.className = 'status';
+      statusText.textContent = 'Loading data...';
+
+      try {
+        const payload = await loadJSONP(API_URL);
+        render(payload);
+        statusText.textContent = 'Live data loaded successfully';
+      } catch (err) {
+        console.error(err);
+        statusText.className = 'status error';
+        statusText.textContent = 'API load failed. Check Apps Script URL / deployment.';
+        tbody.innerHTML = '<tr><td colspan="5" style="padding:24px;color:#d64545;">Could not load data.</td></tr>';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
